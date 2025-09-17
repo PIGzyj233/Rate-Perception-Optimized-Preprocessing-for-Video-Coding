@@ -70,7 +70,7 @@ class TrainDataset_real(Dataset):
 
         # degradation
         # img_H, img_L = utils_sisr.anime_train_degradation(img_H, self.sf, self.gaussion_noise_max, self.enhance_hr)
-        patch_H, kernel, kernel2, sinc_kernel = utils_sisr.real_degradation(patch_H, self.opt, self.sf, self.enhance_hr)
+        kernel, kernel2, sinc_kernel = utils_sisr.real_degradation(self.opt, self.sf)
         
 
         # rgb to yuv

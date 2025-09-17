@@ -1,19 +1,24 @@
-prefix: "RFDN_default"
+degradation_type: "real"
+prefix: "rtx4070_training"
 manual_seed: 42
-dataset_root: "/data/datasets/sr_dataset/general"
-batch_size: 64
-num_workers: 32
-patch_size: 192
-enhance_hr: False
-to_yuv: False
+dataset_list_path: "E:/python_projects/Rate-Perception-Optimized-Preprocessing-for-Video-Coding/character_pdf_dense_patch.txt"
+val_dataset_path: "E:/python_projects/Rate-Perception-Optimized-Preprocessing-for-Video-Coding/validation_data"
+batch_size: 16   # 提高批次大小以充分利用GPU
+num_workers: 4   # 降低worker数量以避免内存不足
+patch_size: 64  # 保持合适的patch大小
+paired_data: false
+enhance_hr: true
+low_resolution: false
+to_yuv: false
 network:
-  scale: 2
+  scale: 1
   pretrained: null
 loss: ""
-gpus: [0, 1]
-learning_rate: 1e-4
-scheduler_milestones: [100000, 200000, 300000, 400000]
+gpus: [0]
+learning_rate: 0.0001
+scheduler_milestones: [400, 800, 1200]  # 适当延长训练里程碑
 scheduler_gamma: 0.5
-steps_val: 5000
-output_dir: "output/default"
-dist: True
+steps_val: 2000  # 每2000步验证一次
+output_dir: "output/rtx4070_training"
+dist: false  # 单卡训练
+mixed_precision: true  # 启用混合精度训练以提升性能

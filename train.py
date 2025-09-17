@@ -43,7 +43,7 @@ class Trainer:
         torch.cuda.set_device(self.rank % self.world_size)
         torch.distributed.init_process_group(backend="nccl", rank=self.rank, world_size=self.world_size)
     
-    def cleanup():
+    def cleanup(self):
         torch.dist.destroy_process_group()
 
     def init_datasets(self):
@@ -471,17 +471,28 @@ class Trainer:
 
 
 if __name__ == "__main__":
+    # Load config from yaml file
+    config = load_config()
 
-    os.environ['MASTER_ADDR'] = 'localhost'
-    os.environ['MASTER_PORT'] = '45678'
-    gpu_list = ",".join(str(x) for x in DEFAULT_CONFIG["gpus"])
-    os.environ["CUDA_VISIBLE_DEVICES"] = gpu_list
-    world_size = torch.cuda.device_count()
-    mp.spawn(
-        Trainer,
-        nprocs=world_size,
-        args=(world_size, DEFAULT_CONFIG, DEGRADATION_CONFIG,),
-        join=True)
+    # Check if distributed training is enabled
+    if config.get("dist", False):
+        # Distributed training
+        os.environ['MASTER_ADDR'] = 'localhost'
+        os.environ['MASTER_PORT'] = '45678'
+        gpu_list = ",".join(str(x) for x in config["gpus"])
+        os.environ["CUDA_VISIBLE_DEVICES"] = gpu_list
+        world_size = torch.cuda.device_count()
+        mp.spawn(
+            Trainer,
+            nprocs=world_size,
+            args=(world_size, config, DEGRADATION_CONFIG,),
+            join=True)
+    else:
+        # Single GPU training
+        gpu_list = ",".join(str(x) for x in config["gpus"])
+        os.environ["CUDA_VISIBLE_DEVICES"] = gpu_list
+        from train_single_gpu import SingleGPUTrainer
+        trainer = SingleGPUTrainer(config, DEGRADATION_CONFIG)
 
 
 

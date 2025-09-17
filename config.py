@@ -4,7 +4,7 @@ import yaml
 ### Model RFLite_v2
 DEFAULT_CONFIG_PATH = "./configs/default.yaml"
 DEFAULT_CONFIG = {
-    "degradation_type": "paired", # real or paired or norm
+    "degradation_type": "real", # real or paired or norm
     "prefix": "preprocess_v2",
     "manual_seed": None,
     # "dataset_list_path": "/data/docker/machengqian/dataset/flicker_div_ffhq_data_patch_list.txt",
@@ -22,13 +22,13 @@ DEFAULT_CONFIG = {
         "pretrained": "/data/docker/machengqian/preprocess/preprocess-rembrandt/checkpoints/step_2580000.pth",
     },
     "loss": "",
-    "gpus": [0, 1],
+    "gpus": [0],
     "learning_rate": 0.0001,
     "scheduler_milestones": [200, 600, 1000],
     "scheduler_gamma": 0.5,
     "steps_val": 20000,
     "output_dir": "output/20220707_v62_4",
-    "dist": True
+    "dist": False
 }
 DEGRADATION_CONFIG = {
     "resize_prob": [0.3, 0.5, 0.2],  # up, down, keep
@@ -72,7 +72,7 @@ DEGRADATION_CONFIG = {
 
 def load_config(path=DEFAULT_CONFIG_PATH):
     try:
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             config_data = yaml.load(f, Loader=yaml.SafeLoader)
             config_data["learning_rate"] = float(config_data["learning_rate"])
         return config_data
