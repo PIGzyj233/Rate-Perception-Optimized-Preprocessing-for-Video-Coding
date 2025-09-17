@@ -14,3 +14,5 @@ core*
 config_*
 *.txt
 *.onnx
+./datasets/
+./screenshot-server/screenshots
